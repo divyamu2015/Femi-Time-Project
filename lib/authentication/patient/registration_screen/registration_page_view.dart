@@ -35,6 +35,7 @@ class _RegistrationPageState extends State<RegistrationPage>
   double? latitude;
   double? longitude;
   get loadFromJson => null;
+   bool _obscurePassword = true;
 
   @override
   void initState() {
@@ -175,11 +176,13 @@ class _RegistrationPageState extends State<RegistrationPage>
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
       child: TextFormField(
+        obscureText: obscureText ? _obscurePassword : false,
+      
         maxLines: maxLines ?? 1, // Use maxLines if provided, otherwise 1
         controller: controller,
         validator: validator,
         keyboardType: keyboardType,
-        obscureText: obscureText,
+      // obscureText: obscureText,
         decoration: InputDecoration(
           labelText: label,
           labelStyle: const TextStyle(color: Colors.black),
@@ -191,6 +194,20 @@ class _RegistrationPageState extends State<RegistrationPage>
             borderRadius: BorderRadius.circular(16.0),
             borderSide: const BorderSide(width: 2.0, color: Color(0xFF163A57)),
           ),
+           suffixIcon: obscureText
+            ? IconButton(
+                icon: Icon(
+                  _obscurePassword
+                      ? Icons.visibility
+                      : Icons.visibility_off,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _obscurePassword = !_obscurePassword;
+                  });
+                },
+              )
+            : null,
         ),
       ),
     );

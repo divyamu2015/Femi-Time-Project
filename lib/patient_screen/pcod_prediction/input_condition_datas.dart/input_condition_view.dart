@@ -169,14 +169,14 @@ class _HealthProfileScreenState extends State<HealthProfileScreen> {
                 bloodGroup = v;
               }),
               SizedBox(height: 16),
-              _buildTextField(
-                'Pulse Rate (bpm)',
-                'Enter pulse rate',
-                onChanged: (v) {
-                  pulseRate = v;
-                },
-                keyboardType: TextInputType.number,
-              ),
+              // _buildTextField(
+              //   'Pulse Rate (bpm)',
+              //   'Enter pulse rate',
+              //   onChanged: (v) {
+              //     pulseRate = v;
+              //   },
+              //   keyboardType: TextInputType.number,
+              // ),
 
               _buildSectionHeader('Hormonal Health'),
               _buildDropdown('Cycle Regularity', _regularityOptions, (v) {
@@ -186,7 +186,7 @@ class _HealthProfileScreenState extends State<HealthProfileScreen> {
               SizedBox(height: 16),
 
               _buildSectionHeader('Symptoms'),
-              _buildDropdown('Hair Growth', _severityOptions, (v) {
+              _buildDropdown('Unwanted Hair Growth', _severityOptions, (v) {
                 hairGrowth = v;
               }),
               SizedBox(height: 16),
@@ -202,7 +202,7 @@ class _HealthProfileScreenState extends State<HealthProfileScreen> {
                 skinDarkness = v;
               }),
 
-              _buildSectionHeader("Upload Scanning Report (PDF)"),
+              _buildSectionHeader("Upload Bloodtest Report (PDF)"),
 
               InkWell(
                 onTap: pickPdf,
@@ -382,7 +382,7 @@ class _HealthProfileScreenState extends State<HealthProfileScreen> {
           bmi: double.parse(_bmiController.text),
           fastFoodConsumption: mapFrequency(fastFoodConsumption),
           bloodGroup: bloodGroup ?? '',
-          pulseRate: double.parse(pulseRate ?? '0'),
+         // pulseRate: double.parse(pulseRate ?? '0'),
           cycleRegularity: mapRegularity(cycleRegularity),
           hairGrowth: mapSeverity(hairGrowth),
           acne: mapSeverity(acne),

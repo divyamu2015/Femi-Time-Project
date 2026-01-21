@@ -1,5 +1,4 @@
 import 'package:femitime_project/authentication/patient/login_screen/login_view_page.dart';
-import 'package:femitime_project/screens/chatbot/chatbot.dart';
 import 'package:femitime_project/patient_screen/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';

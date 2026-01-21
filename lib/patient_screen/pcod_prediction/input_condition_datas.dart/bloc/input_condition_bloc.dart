@@ -27,7 +27,7 @@ class InputConditionBloc
   bmi: event.bmi,
   fastFoodConsumption: event.fastFoodConsumption,
   bloodGroup: event.bloodGroup,
-  pulseRate: event.pulseRate,
+//  pulseRate: event.pulseRate,
   cycleRegularity: event.cycleRegularity,
   hairGrowth: event.hairGrowth,
   acne: event.acne,

@@ -22,6 +22,7 @@ class _LoginScreenState extends State<LoginScreen>
   final TextEditingController passController = TextEditingController();
   late AnimationController _animationController;
   bool isloading = false;
+   bool _obscurePassword = true;
   final String _selectedUserType = 'user';
   int? userId;
   final GlobalKey<FormState> _fromKey = GlobalKey<FormState>();
@@ -85,33 +86,49 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   Widget _buildTextField(
-    String label, {
-    required TextEditingController controller,
-    required String? Function(String?)? validator,
-    TextInputType keyboardType = TextInputType.text,
-    // String? label,
-  }) {
-    return Padding(
-      padding: EdgeInsets.all(16.0),
-      child: TextFormField(
-        controller: controller,
-        validator: validator,
-        keyboardType: keyboardType,
-        decoration: InputDecoration(
-          labelText: label,
-          labelStyle: const TextStyle(color: Colors.black),
-          border: AnimatedInputBorder(
-            animationValue: _animationController.value,
-          ),
-          focusedBorder: AnimatedInputBorder(
-            animationValue: _animationController.value,
-            borderRadius: BorderRadius.circular(16.0),
-            borderSide: const BorderSide(width: 2.0, color: Color(0xFF163A57)),
-          ),
+  String label, {
+  bool obscureText = false,
+  required TextEditingController controller,
+  required String? Function(String?)? validator,
+  TextInputType keyboardType = TextInputType.text,
+}) {
+  return Padding(
+    padding: EdgeInsets.all(16.0),
+    child: TextFormField(
+      obscureText: obscureText ? _obscurePassword : false,
+      controller: controller,
+      validator: validator,
+      keyboardType: keyboardType,
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: const TextStyle(color: Colors.black),
+        border: AnimatedInputBorder(
+          animationValue: _animationController.value,
         ),
+        focusedBorder: AnimatedInputBorder(
+          animationValue: _animationController.value,
+          borderRadius: BorderRadius.circular(16.0),
+          borderSide: const BorderSide(width: 2.0, color: Color(0xFF163A57)),
+        ),
+        suffixIcon: obscureText
+            ? IconButton(
+                icon: Icon(
+                  _obscurePassword
+                      ? Icons.visibility
+                      : Icons.visibility_off,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _obscurePassword = !_obscurePassword;
+                  });
+                },
+              )
+            : null,
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -292,6 +309,7 @@ class _LoginScreenState extends State<LoginScreen>
                                   ),
                                   _buildTextField(
                                     "Password",
+                                    obscureText: true,
                                     //  keyboardType: TextInputType.pas,
                                     controller: passController,
                                     validator: (value) {
