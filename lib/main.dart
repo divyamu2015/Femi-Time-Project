@@ -3,9 +3,9 @@ import 'package:femitime_project/authentication/doctor_authentication/registrati
 import 'package:femitime_project/authentication/patient/login_screen/bloc/login_screen_bloc.dart';
 import 'package:femitime_project/authentication/patient/registration_screen/bloc/registration_page_bloc.dart';
 import 'package:femitime_project/hospital_doctor_screen/dochospital_create/bloc/bloc_bloc.dart';
-import 'package:femitime_project/other_screen/splash_screen.dart';
 import 'package:femitime_project/patient_screen/book_now_hos_screen/bloc/book_now_bloc.dart';
 import 'package:femitime_project/patient_screen/list_nearbyhos_doc/bloc/list_nearbyhos_bloc.dart';
+import 'package:femitime_project/patient_screen/remedies/remedy_splashscreen.dart';
 import 'package:femitime_project/screens/menstrual_track/input_cycle/bloc/input_cycle_bloc.dart';
 import 'package:femitime_project/patient_screen/pcod_prediction/input_condition_datas.dart/bloc/input_condition_bloc.dart';
 import 'package:flutter/material.dart';
@@ -43,7 +43,8 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         ),
-        home: SplashScreen()
+        home: RemedySplashScreen()
+        //SplashScreen()
         //DoctorRegistrationView(),
        // DoctorLoginScreen(),
       // RoleSelectionScreen(),

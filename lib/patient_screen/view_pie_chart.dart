@@ -1,4 +1,4 @@
-import 'package:femitime_project/authentication/patient/login_screen/login_view_page.dart';
+//import 'package:femitime_project/authentication/patient/login_screen/login_view_page.dart';
 import 'package:femitime_project/patient_screen/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -37,36 +37,36 @@ class _CyclePieChartPageState extends State<CyclePieChartPage> {
     super.dispose();
   }
 
-  Future<void> _showLogoutDialog(BuildContext context) async {
-    return showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Logout Alert"),
-        content: const Text("Are you sure you want to logout?"),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(); // Close dialog (No)
-            },
-            child: const Text("No"),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(); // Close dialog first
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => LoginScreen()),
-              ); // Navigate to login (Yes)
-            },
-            child: const Text(
-              "Yes, Logout",
-              style: TextStyle(color: Colors.red),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Future<void> _showLogoutDialog(BuildContext context) async {
+  //   return showDialog(
+  //     context: context,
+  //     builder: (context) => AlertDialog(
+  //       title: const Text("Logout Alert"),
+  //       content: const Text("Are you sure you want to logout?"),
+  //       actions: [
+  //         TextButton(
+  //           onPressed: () {
+  //             Navigator.of(context).pop(); // Close dialog (No)
+  //           },
+  //           child: const Text("No"),
+  //         ),
+  //         TextButton(
+  //           onPressed: () {
+  //             Navigator.of(context).pop(); // Close dialog first
+  //             Navigator.pushReplacement(
+  //               context,
+  //               MaterialPageRoute(builder: (context) => LoginScreen()),
+  //             ); // Navigate to login (Yes)
+  //           },
+  //           child: const Text(
+  //             "Yes, Logout",
+  //             style: TextStyle(color: Colors.red),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {

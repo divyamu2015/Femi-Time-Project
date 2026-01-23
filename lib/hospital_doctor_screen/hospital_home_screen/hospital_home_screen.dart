@@ -17,7 +17,7 @@ class HospaitalDocHomeScreen extends StatefulWidget {
 
 class _HospaitalDocHomeScreenState extends State<HospaitalDocHomeScreen>
     with SingleTickerProviderStateMixin {
-  final GlobalKey<SliderDrawerState> _sliderDrawerKey =
+  final GlobalKey<SliderDrawerState> sliderDrawerKey =
       GlobalKey<SliderDrawerState>();
   String title = "Medico Care";
 

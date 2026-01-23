@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:femitime_project/authentication/patient/login_screen/login_view_page.dart';
 import 'package:femitime_project/patient_screen/list_nearbyhos_doc/list_nearbyhos_doc_view.dart';
-import 'package:femitime_project/patient_screen/pcod_prediction/chatbot/chatbot.dart';
 import 'package:femitime_project/patient_screen/pcod_prediction/input_condition_datas.dart/input_condition_service.dart';
+import 'package:femitime_project/patient_screen/remedies/remedy_splashscreen.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -420,7 +420,9 @@ class _HealthProfileScreenState extends State<HealthProfileScreen> {
           onPressed: () {
             Navigator.push( 
               context,
-              MaterialPageRoute(builder: (_) => ChatScreen(userId: userId!)),
+              MaterialPageRoute(builder: (_) => RemedySplashScreen()
+             // ChatScreen(userId: userId!)
+              ),
             );
           },
           child: Text('Likely'),

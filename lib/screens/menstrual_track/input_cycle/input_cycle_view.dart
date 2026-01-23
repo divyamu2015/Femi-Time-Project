@@ -38,6 +38,27 @@ class _PeriodInputScreenState extends State<PeriodInputScreen> {
     }
   }
 
+  List<String> selectedSymptoms = [];
+
+  final List<String> symptomOptions = [
+    'Back Pain',
+    'Breast Pain',
+    'Acne',
+    'Stomach Pain',
+    'Leg Pain',
+    'Headache',
+    'Fatigue',
+    'Bloating',
+    'Nausea',
+    'Mood Swings',
+    
+    'Cramps',
+    'Cravings',
+    'Pimples',
+    'Sweating',
+    'No Symptoms',
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -83,8 +104,13 @@ class _PeriodInputScreenState extends State<PeriodInputScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(onPressed: () {}, icon: Icon(Icons.arrow_back_sharp,
-        color: const Color.fromARGB(255, 177, 11, 66),)),
+        leading: IconButton(
+          onPressed: () {},
+          icon: Icon(
+            Icons.arrow_back_sharp,
+            color: const Color.fromARGB(255, 177, 11, 66),
+          ),
+        ),
         title: Text('Period Cycle Details'),
         backgroundColor: Colors.pink[100],
       ),
@@ -223,29 +249,79 @@ class _PeriodInputScreenState extends State<PeriodInputScreen> {
                 // Symptoms dropdown
                 Text('Symptoms', style: TextStyle(fontWeight: FontWeight.bold)),
                 SizedBox(height: 8),
-                DropdownButtonFormField<String>(
-                  initialValue: symptoms,
-                  items: ['Cramps', 'Mood Swings', 'Cravings'].map((
-                    String value,
-                  ) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      symptoms = value!;
-                    });
-                  },
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 24),
+                // DropdownButtonFormField<String>(
+                //   initialValue: symptoms,
+                //   items: ['Cramps', 'Mood Swings', 'Cravings'].map((
+                //     String value,
+                //   ) {
+                //     return DropdownMenuItem<String>(
+                //       value: value,
+                //       child: Text(value),
+                //     );
+                //   }).toList(),
+                //   onChanged: (value) {
+                //     setState(() {
+                //       symptoms = value!;
+                //     });
+                //   },
+                //   decoration: InputDecoration(
+                //     border: OutlineInputBorder(
+                //       borderRadius: BorderRadius.circular(6),
+                //     ),
+                //   ),
+                // ),
+                // SizedBox(height: 24),
 
+                GridView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: symptomOptions.length,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3, // 3 per row
+                    childAspectRatio: 3, // controls width/height
+                  ),
+                  itemBuilder: (context, index) {
+                    final symptom = symptomOptions[index];
+
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          if (selectedSymptoms.contains(symptom)) {
+                            selectedSymptoms.remove(symptom);
+                          } else {
+                            selectedSymptoms.add(symptom);
+                          }
+                        });
+                      },
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Checkbox(
+                            value: selectedSymptoms.contains(symptom),
+                            activeColor: Colors.pink,
+                            onChanged: (value) {
+                              setState(() {
+                                if (value == true) {
+                                  selectedSymptoms.add(symptom);
+                                } else {
+                                  selectedSymptoms.remove(symptom);
+                                }
+                              });
+                            },
+                          ),
+                          Expanded(
+                            child: Text(
+                              symptom,
+                              style: TextStyle(fontSize: 13),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(height: 18,),
                 // Description TextFormField
                 TextFormField(
                   controller: _descriptionController,

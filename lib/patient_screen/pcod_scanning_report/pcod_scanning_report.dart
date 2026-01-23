@@ -202,49 +202,49 @@ class _UploadPcodScreenState extends State<UploadPcodScreen> {
     );
   }
 
-  Widget _infoTile(IconData icon, String text) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.06),
-        borderRadius: BorderRadius.circular(40),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, size: 18, color: Colors.white70),
-          const SizedBox(width: 10),
-          Text(
-            text,
-            style: const TextStyle(color: Colors.white70, fontSize: 14),
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _infoTile(IconData icon, String text) {
+  //   return Container(
+  //     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+  //     decoration: BoxDecoration(
+  //       color: Colors.white.withOpacity(0.06),
+  //       borderRadius: BorderRadius.circular(40),
+  //     ),
+  //     child: Row(
+  //       children: [
+  //         Icon(icon, size: 18, color: Colors.white70),
+  //         const SizedBox(width: 10),
+  //         Text(
+  //           text,
+  //           style: const TextStyle(color: Colors.white70, fontSize: 14),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
-  Widget _inputField(
-    String hint,
-    TextEditingController controller, {
-    int maxLines = 1,
-  }) {
-    return TextField(
-      controller: controller,
-      maxLines: maxLines,
-      style: const TextStyle(color: Colors.white),
-      decoration: InputDecoration(
-        hintText: hint,
-        hintStyle: TextStyle(color: Colors.white54),
-        filled: true,
-        fillColor: Colors.white.withOpacity(0.05),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 14,
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide.none,
-        ),
-      ),
-    );
-  }
+  // Widget _inputField(
+  //   String hint,
+  //   TextEditingController controller, {
+  //   int maxLines = 1,
+  // }) {
+  //   return TextField(
+  //     controller: controller,
+  //     maxLines: maxLines,
+  //     style: const TextStyle(color: Colors.white),
+  //     decoration: InputDecoration(
+  //       hintText: hint,
+  //       hintStyle: TextStyle(color: Colors.white54),
+  //       filled: true,
+  //       fillColor: Colors.white.withOpacity(0.05),
+  //       contentPadding: const EdgeInsets.symmetric(
+  //         horizontal: 16,
+  //         vertical: 14,
+  //       ),
+  //       border: OutlineInputBorder(
+  //         borderRadius: BorderRadius.circular(14),
+  //         borderSide: BorderSide.none,
+  //       ),
+  //     ),
+  //   );
+  // }
 }
