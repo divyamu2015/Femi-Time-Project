@@ -122,7 +122,7 @@ return pcodInputDetails(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  started,TResult Function( int userId,  int age,  double weight,  double height,  double bmi,  int fastFoodConsumption,  String bloodGroup,  double pulseRate,  int cycleRegularity,  int hairGrowth,  int acne,  int moodSwings,  int skinDarkening,  File pdfFile)?  pcodInputDetails,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  started,TResult Function( int userId,  int age,  double weight,  double height,  double bmi,  String fastFoodConsumption,  String bloodGroup,  double pulseRate,  int cycleRegularity,  int hairGrowth,  int acne,  int moodSwings,  int skinDarkening,  File pdfFile)?  pcodInputDetails,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Started() when started != null:
 return started();case _PcodInputDetails() when pcodInputDetails != null:
@@ -144,7 +144,7 @@ return pcodInputDetails(_that.userId,_that.age,_that.weight,_that.height,_that.b
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  started,required TResult Function( int userId,  int age,  double weight,  double height,  double bmi,  int fastFoodConsumption,  String bloodGroup,  double pulseRate,  int cycleRegularity,  int hairGrowth,  int acne,  int moodSwings,  int skinDarkening,  File pdfFile)  pcodInputDetails,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  started,required TResult Function( int userId,  int age,  double weight,  double height,  double bmi,  String fastFoodConsumption,  String bloodGroup,  double pulseRate,  int cycleRegularity,  int hairGrowth,  int acne,  int moodSwings,  int skinDarkening,  File pdfFile)  pcodInputDetails,}) {final _that = this;
 switch (_that) {
 case _Started():
 return started();case _PcodInputDetails():
@@ -165,7 +165,7 @@ return pcodInputDetails(_that.userId,_that.age,_that.weight,_that.height,_that.b
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  started,TResult? Function( int userId,  int age,  double weight,  double height,  double bmi,  int fastFoodConsumption,  String bloodGroup,  double pulseRate,  int cycleRegularity,  int hairGrowth,  int acne,  int moodSwings,  int skinDarkening,  File pdfFile)?  pcodInputDetails,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  started,TResult? Function( int userId,  int age,  double weight,  double height,  double bmi,  String fastFoodConsumption,  String bloodGroup,  double pulseRate,  int cycleRegularity,  int hairGrowth,  int acne,  int moodSwings,  int skinDarkening,  File pdfFile)?  pcodInputDetails,}) {final _that = this;
 switch (_that) {
 case _Started() when started != null:
 return started();case _PcodInputDetails() when pcodInputDetails != null:
@@ -221,7 +221,7 @@ class _PcodInputDetails implements InputConditionEvent {
  final  double weight;
  final  double height;
  final  double bmi;
- final  int fastFoodConsumption;
+ final  String fastFoodConsumption;
  final  String bloodGroup;
  final  double pulseRate;
  final  int cycleRegularity;
@@ -261,7 +261,7 @@ abstract mixin class _$PcodInputDetailsCopyWith<$Res> implements $InputCondition
   factory _$PcodInputDetailsCopyWith(_PcodInputDetails value, $Res Function(_PcodInputDetails) _then) = __$PcodInputDetailsCopyWithImpl;
 @useResult
 $Res call({
- int userId, int age, double weight, double height, double bmi, int fastFoodConsumption, String bloodGroup, double pulseRate, int cycleRegularity, int hairGrowth, int acne, int moodSwings, int skinDarkening, File pdfFile
+ int userId, int age, double weight, double height, double bmi, String fastFoodConsumption, String bloodGroup, double pulseRate, int cycleRegularity, int hairGrowth, int acne, int moodSwings, int skinDarkening, File pdfFile
 });
 
 
@@ -286,7 +286,7 @@ as int,weight: null == weight ? _self.weight : weight // ignore: cast_nullable_t
 as double,height: null == height ? _self.height : height // ignore: cast_nullable_to_non_nullable
 as double,bmi: null == bmi ? _self.bmi : bmi // ignore: cast_nullable_to_non_nullable
 as double,fastFoodConsumption: null == fastFoodConsumption ? _self.fastFoodConsumption : fastFoodConsumption // ignore: cast_nullable_to_non_nullable
-as int,bloodGroup: null == bloodGroup ? _self.bloodGroup : bloodGroup // ignore: cast_nullable_to_non_nullable
+as String,bloodGroup: null == bloodGroup ? _self.bloodGroup : bloodGroup // ignore: cast_nullable_to_non_nullable
 as String,pulseRate: null == pulseRate ? _self.pulseRate : pulseRate // ignore: cast_nullable_to_non_nullable
 as double,cycleRegularity: null == cycleRegularity ? _self.cycleRegularity : cycleRegularity // ignore: cast_nullable_to_non_nullable
 as int,hairGrowth: null == hairGrowth ? _self.hairGrowth : hairGrowth // ignore: cast_nullable_to_non_nullable

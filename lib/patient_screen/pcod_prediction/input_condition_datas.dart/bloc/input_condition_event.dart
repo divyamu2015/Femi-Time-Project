@@ -9,7 +9,7 @@ class InputConditionEvent with _$InputConditionEvent {
   required double weight,
   required double height,
   required double bmi,
-  required int fastFoodConsumption,
+  required String fastFoodConsumption,
   required String bloodGroup,
   required double pulseRate,
   required int cycleRegularity,

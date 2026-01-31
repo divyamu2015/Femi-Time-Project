@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:femitime_project/authentication/patient/login_screen/login_view_page.dart';
+import 'package:femitime_project/patient_screen/home_screen.dart';
 import 'package:femitime_project/patient_screen/list_nearbyhos_doc/list_nearbyhos_doc_view.dart';
 import 'package:femitime_project/patient_screen/pcod_prediction/input_condition_datas.dart/input_condition_service.dart';
 import 'package:femitime_project/patient_screen/remedies/remedy_splashscreen.dart';
@@ -355,103 +356,91 @@ class _HealthProfileScreenState extends State<HealthProfileScreen> {
     }
   }
 
-  Future<void> _onSubmit() async {
-    print("Before validation");
-    if (_formKey.currentState!.validate()) {
-      print("After validation");
-      if (selectedPdf == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Please upload your scanning report (PDF)")),
-        );
-        return;
-      }
+ Future<void> _onSubmit() async {
+  if (!_formKey.currentState!.validate()) return;
 
-      _formKey.currentState!.save();
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => Center(child: CircularProgressIndicator()),
-      );
-
-      try {
-        final response = await inputHealthProfile(
-          userId: userId!,
-          age: int.parse(age!),
-          weight: double.parse(weight!),
-          height: double.parse(height!),
-          bmi: double.parse(_bmiController.text),
-          fastFoodConsumption: mapFrequency(fastFoodConsumption),
-          bloodGroup: bloodGroup ?? '',
-         // pulseRate: double.parse(pulseRate ?? '0'),
-          cycleRegularity: mapRegularity(cycleRegularity),
-          hairGrowth: mapSeverity(hairGrowth),
-          acne: mapSeverity(acne),
-          moodSwings: mapSeverity(moodSwings),
-          skinDarkening: mapSeverity(skinDarkness),
-          pdfFile: selectedPdf!, // NEW
-        );
-        //    Navigator.of(context).pop(); // Remove loading
-        _showPredictionDialog(response.result);
-        print(response.result);
-      } catch (e) {
-        Navigator.of(context).pop(); // Remove loading
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text("Error: ${e.toString()}")
-      )
-      );
-      print(e.toString());
-      }
-    }
-  }
-
-  void _showPredictionDialog(String riskLevel) {
-    List<Widget> actions = [];
-    print('result: $riskLevel');
-    if (riskLevel == 'Unlikely') {
-      actions.add(
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: Text('Unlikely'),
-        ),
-      );
-       actions.add(
-        TextButton(
-          onPressed: () {
-            Navigator.push( 
-              context,
-              MaterialPageRoute(builder: (_) => RemedySplashScreen()
-             // ChatScreen(userId: userId!)
-              ),
-            );
-          },
-          child: Text('Likely'),
-        ),
-      );
-    } else if (riskLevel == 'High Risk') {
-      actions.add(
-        OutlinedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => FindHosDoctorScreen(userId: userId!),
-              ),
-            );
-          },
-          child: Text('High Risk'),
-        ),
-      );
-    }
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text("result: $riskLevel"),
-        // content: Text("PCOD Risk: $riskLevel"),
-        actions: actions,
-      ),
+  if (selectedPdf == null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Please upload PDF")),
     );
+    return;
   }
+
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (_) => const Center(child: CircularProgressIndicator()),
+  );
+
+  try {
+    final response = await inputHealthProfile(
+      userId: userId!,
+      age: int.parse(age!),
+      weight: double.parse(weight!),
+      height: double.parse(height!),
+      bmi: double.parse(_bmiController.text),
+      fastFoodConsumption: fastFoodConsumption!, // STRING
+      bloodGroup: bloodGroup!,
+      cycleRegularity: mapRegularity(cycleRegularity),
+      hairGrowth: mapSeverity(hairGrowth),
+      acne: mapSeverity(acne),
+      moodSwings: mapSeverity(moodSwings),
+      skinDarkening: mapSeverity(skinDarkness),
+      pdfFile: selectedPdf!,
+    );
+
+    Navigator.of(context).pop();
+    _showPredictionDialog(response.result);
+  } catch (e) {
+    Navigator.of(context).pop();
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(e.toString())));
+  }
+}
+
+
+ void _showPredictionDialog(String riskLevel) {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (ctx) => AlertDialog(
+      title: Text("Result: $riskLevel"),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.of(ctx).pop(); // close dialog first
+
+            if (riskLevel == 'Likely') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => RemedySplashScreen(),
+                ),
+              );
+            } else if (riskLevel == 'High Risk') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => FindHosDoctorScreen(userId: userId!),
+                ),
+              );
+            } else {
+              // Unlikely or anything else
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => HomeScreen(userId: userId!,),
+                ),
+              );
+            }
+          },
+          child: const Text("OK"),
+        ),
+      ],
+    ),
+  );
+}
+
 
   @override
   void dispose() {

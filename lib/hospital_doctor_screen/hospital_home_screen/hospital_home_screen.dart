@@ -1,5 +1,6 @@
 import 'package:femitime_project/authentication/patient/login_screen/login_view_page.dart';
 import 'package:femitime_project/hospital_doctor_screen/dochospital_create/dochospital_create_slot.dart';
+import 'package:femitime_project/hospital_doctor_screen/hospital_home_screen/hospital_home_Ui.dart';
 import 'package:femitime_project/hospital_doctor_screen/hospital_home_screen/view_patient_feedbacks.dart';
 import 'package:femitime_project/hospital_doctor_screen/hospital_home_screen/view_user_booking.dart';
 import 'package:flutter/material.dart';
@@ -159,11 +160,7 @@ class _HospaitalDocHomeScreenState extends State<HospaitalDocHomeScreen>
                    height: double.infinity,
                    color: const Color.fromARGB(255, 180, 210, 235),
                  ),
-                 Container(
-                   width: double.infinity,
-                   height: double.infinity,
-                   color: const Color.fromARGB(255, 162, 238, 209),
-                 ),
+               const DoctorHomeUI(),
                  Container(
                    width: double.infinity,
                    height: double.infinity,

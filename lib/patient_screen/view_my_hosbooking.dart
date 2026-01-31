@@ -22,94 +22,59 @@ class _HosDoctorAppointmentsPagesState extends State<HosDoctorAppointmentsPages>
   @override
   void initState() {
     super.initState();
-    fetchBookings();
-   // fetchClinBookings();
     userId = widget.userId;
+    fetchBookings();
   }
 
   String formatDate(String dateStr) {
-    final date = DateTime.parse(dateStr); // "2025-11-01"
+    final date = DateTime.parse(dateStr);
     return DateFormat('dd-MM-yyyy').format(date);
   }
 
-Future<void> fetchBookings() async {
-  setState(() {
-    isLoading = true;
-    errorText = null;
-  });
-  final url = Uri.parse(
-    'https://417sptdw-8005.inc1.devtunnels.ms/userapp/user/${widget.userId}/hospital/bookings/',
-  );
-  try {
-    final response = await http.get(url);
-    if (response.statusCode == 200) {
-      final hospitalBookings = jsonDecode(response.body) as List<dynamic>;
-      setState(() {
-        bookings.addAll(hospitalBookings);  // Append hospital bookings
-        isLoading = false;
-      });
-    } else {
-      setState(() {
-        errorText = 'Failed to load hospital bookings';
-        isLoading = false;
-      });
-    }
-  } catch (e) {
+  Future<void> fetchBookings() async {
     setState(() {
-      errorText = 'Error: $e';
-      isLoading = false;
+      isLoading = true;
+      errorText = null;
+      bookings.clear();
     });
-  }
-}
 
-Future<void> fetchClinBookings() async {
-  setState(() {
-    isLoading = true;
-    errorText = null;
-  });
-  final url = Uri.parse(
-    'https://417sptdw-8005.inc1.devtunnels.ms/userapp/user/${widget.userId}/clinic/bookings/',
-  );
-  try {
-    final response = await http.get(url);
-    if (response.statusCode == 200) {
-      final clinicBookings = jsonDecode(response.body) as List<dynamic>;
-      setState(() {
-        bookings.addAll(clinicBookings);  // Append clinic bookings
-        // Optionally sort here by date & time descending or ascending
-        bookings.sort((a, b) {
-          final dateA = DateTime.parse(a['date']);
-          final dateB = DateTime.parse(b['date']);
-          // To sort earliest first, use dateA.compareTo(dateB)
-          // To sort latest first, use dateB.compareTo(dateA)
-          return dateA.compareTo(dateB);
+    final url = Uri.parse(
+      'https://417sptdw-8005.inc1.devtunnels.ms/userapp/user/${widget.userId}/hospital/bookings/',
+    );
+
+    try {
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        final hospitalBookings = jsonDecode(response.body) as List<dynamic>;
+
+        // Add cancel flag
+        for (var b in hospitalBookings) {
+          b['isCancelled'] = false;
+        }
+
+        setState(() {
+          bookings = hospitalBookings;
+          isLoading = false;
         });
-        isLoading = false;
-      });
-    } else {
+      } else {
+        setState(() {
+          errorText = 'Failed to load bookings';
+          isLoading = false;
+        });
+      }
+    } catch (e) {
       setState(() {
-        errorText = 'Failed to load clinic bookings';
+        errorText = 'Error: $e';
         isLoading = false;
       });
     }
-  } catch (e) {
+  }
+
+  void cancelAppointment(int index) {
     setState(() {
-      errorText = 'Error: $e';
-      isLoading = false;
+      bookings[index]['isCancelled'] = true;
     });
   }
-}
-
-
-  // String formatDate(String date) {
-  //   // Expects "2025-11-01" and returns "November 01, 2025"
-  //   try {
-  //     final d = DateTime.parse(date);
-  //     return "${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}";
-  //   } catch (_) {
-  //     return date;
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -122,113 +87,132 @@ Future<void> fetchClinBookings() async {
         elevation: 0,
         actions: [
           IconButton(
+            icon: const Icon(Icons.arrow_back),
             onPressed: () {
-              Navigator.of(context).push(
+              Navigator.push(
+                context,
                 MaterialPageRoute(
-                  builder: (context) {
-                    return HomeScreen(userId: userId!);
-                  },
+                  builder: (_) => HomeScreen(userId: userId!),
                 ),
               );
             },
-            icon: Icon(Icons.arrow_back),
           ),
         ],
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : errorText != null
-          ? Center(child: Text(errorText!))
-          : Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: 8.0,
-                horizontal: 8.0,
-              ),
-              child: ListView.builder(
-                itemCount: bookings.length,
-                itemBuilder: (context, index) {
-                  final appoint = bookings[index];
-                  return Card(
-                    color: Colors.white,
-                    elevation: 0,
-                    margin: const EdgeInsets.symmetric(
-                      vertical: 8,
-                      horizontal: 0,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(22),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(12, 16, 12, 12),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // SL no & patient name
-                          Row(
-                            children: [
-                              Text(
-                                "${(index + 1).toString().padLeft(2, '0')}. ",
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 17,
-                                ),
-                              ),
-                              Expanded(
-                                child: Text(
-                                  appoint['doctor_name'] ?? 'Unknown',
+              ? Center(child: Text(errorText!))
+              : ListView.builder(
+                  padding: const EdgeInsets.all(8),
+                  itemCount: bookings.length,
+                  itemBuilder: (context, index) {
+                    final appoint = bookings[index];
+                    final bool isCancelled =
+                        appoint['isCancelled'] == true;
+
+                    return Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(22),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(12, 16, 12, 12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Doctor name
+                            Row(
+                              children: [
+                                Text(
+                                  "${(index + 1).toString().padLeft(2, '0')}. ",
                                   style: const TextStyle(
-                                    fontWeight: FontWeight.w700,
+                                    fontWeight: FontWeight.w600,
                                     fontSize: 17,
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          // Date and Time row
-                          Row(
-                            children: [
-                              const Icon(
-                                Icons.calendar_today,
-                                size: 18,
-                                color: Color(0xFF06857B),
-                              ),
-                              const SizedBox(width: 6),
-                              Text(
-                                formatDate(appoint['date']),
-                                style: const TextStyle(
-                                  color: Color(0xFF424B5A),
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w500,
+                                Expanded(
+                                  child: Text(
+                                    appoint['doctor_name'] ?? 'Unknown',
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 17,
+                                    ),
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(width: 18),
-                              const Icon(
-                                Icons.access_time_filled,
-                                size: 18,
-                                color: Color(0xFF06857B),
-                              ),
-                              const SizedBox(width: 6),
-                              Text(
-                                appoint['time'] ?? '',
-                                style: const TextStyle(
-                                  color: Color(0xFF424B5A),
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
-                          // If you want to show doctor name:
-                          // const SizedBox(height: 4),
-                          // Text("Doctor: ${appoint['doctor_name']}")
-                        ],
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+
+                            // Date & Time
+                            Row(
+                              children: [
+                                const Icon(Icons.calendar_today,
+                                    size: 18, color: Color(0xFF06857B)),
+                                const SizedBox(width: 6),
+                                Text(formatDate(appoint['date'])),
+                                const SizedBox(width: 18),
+                                const Icon(Icons.access_time_filled,
+                                    size: 18, color: Color(0xFF06857B)),
+                                const SizedBox(width: 6),
+                                Text(appoint['time'] ?? ''),
+                              ],
+                            ),
+
+                            const SizedBox(height: 14),
+
+                            // Cancel status / Button
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: isCancelled
+                                  ? const Text(
+                                      'Cancelled Appointment',
+                                      style: TextStyle(
+                                        color: Colors.red,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    )
+                                  : TextButton(
+                                      onPressed: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (_) => AlertDialog(
+                                            title:
+                                                const Text('Cancel Appointment'),
+                                            content: const Text(
+                                                'Are you sure you want to cancel this appointment?'),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () =>
+                                                    Navigator.pop(context),
+                                                child: const Text('No'),
+                                              ),
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                  cancelAppointment(index);
+                                                },
+                                                child: const Text(
+                                                  'Yes, Cancel',
+                                                  style: TextStyle(
+                                                      color: Colors.red),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                      child: const Text(
+                                        'Cancel',
+                                        style: TextStyle(color: Colors.red),
+                                      ),
+                                    ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                },
-              ),
-            ),
+                    );
+                  },
+                ),
     );
   }
 }

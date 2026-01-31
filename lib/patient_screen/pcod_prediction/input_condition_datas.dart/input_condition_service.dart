@@ -10,19 +10,17 @@ Future<UserResponseModel> inputHealthProfile({
   required double weight,
   required double height,
   required double bmi,
-  required int fastFoodConsumption,
+  required String fastFoodConsumption, // STRING now
   required String bloodGroup,
-  //required double pulseRate,
   required int cycleRegularity,
   required int hairGrowth,
   required int acne,
   required int moodSwings,
   required int skinDarkening,
-  required File pdfFile, // NEW
+  required File pdfFile,
 }) async {
   final url = Uri.parse(Urlsss.userInputHealthProfile);
-
-  var request = http.MultipartRequest("POST", url);
+  final request = http.MultipartRequest("POST", url);
 
   request.fields.addAll({
     "user_id": userId.toString(),
@@ -30,9 +28,8 @@ Future<UserResponseModel> inputHealthProfile({
     "weight": weight.toString(),
     "height": height.toString(),
     "bmi": bmi.toString(),
-    "fast_food": fastFoodConsumption.toString(),
+    "fast_food": fastFoodConsumption, // FIXED
     "blood_group": bloodGroup,
-   // "pulse": pulseRate.toString(),
     "cycle": cycleRegularity == 0 ? "Regular" : "Irregular",
     "hair": mapName(hairGrowth),
     "acne": mapName(acne),
@@ -40,20 +37,17 @@ Future<UserResponseModel> inputHealthProfile({
     "skin_darkening": mapName(skinDarkening),
   });
 
-  request.files.add(await http.MultipartFile.fromPath("pdf", pdfFile.path));
+  request.files.add(
+    await http.MultipartFile.fromPath("pdf", pdfFile.path),
+  );
 
   final res = await request.send();
-  print(request);
-  print(res);
   final responseString = await res.stream.bytesToString();
-  print(responseString);
 
   if (res.statusCode == 200 || res.statusCode == 201) {
-    print(res.statusCode);
     return UserResponseModel.fromJson(jsonDecode(responseString));
   } else {
-    print('Failed: ${res.statusCode}');
-    throw Exception("Failed: ${res.statusCode}");
+    throw Exception("API Error ${res.statusCode}: $responseString");
   }
 }
 

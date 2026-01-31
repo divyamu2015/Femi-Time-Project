@@ -1,34 +1,25 @@
-import 'dart:convert';
-
-UserResponseModel userResponseModelFromJson(String str) =>
-    UserResponseModel.fromJson(json.decode(str));
-
-String userResponseModelToJson(UserResponseModel data) =>
-    json.encode(data.toJson());
-
 class UserResponseModel {
   final String status;
-  final int userId;
-  final String user;
+  final int predictionId;
   final String result;
   final ValuesModel values;
+
   final double age;
   final double weight;
   final double height;
   final double bmi;
-  final String fastFoodConsumption;
-  final String bloodGroup;
-  final double pulseRate;
-  final String cycleRegularity;
-  final String hairGrowth;
-  final String acne;
-  final String moodSwings;
-  final String skinDarkening;
+
+  final int fastFoodConsumption;
+  final int bloodGroup;
+  final int cycleRegularity;
+  final int hairGrowth;
+  final int acne;
+  final int moodSwings;
+  final int skinDarkening;
 
   UserResponseModel({
     required this.status,
-    required this.userId,
-    required this.user,
+    required this.predictionId,
     required this.result,
     required this.values,
     required this.age,
@@ -37,7 +28,6 @@ class UserResponseModel {
     required this.bmi,
     required this.fastFoodConsumption,
     required this.bloodGroup,
-    required this.pulseRate,
     required this.cycleRegularity,
     required this.hairGrowth,
     required this.acne,
@@ -45,50 +35,30 @@ class UserResponseModel {
     required this.skinDarkening,
   });
 
- factory UserResponseModel.fromJson(Map<String, dynamic> json) =>
-    UserResponseModel(
-      status: json["status"],
-      userId: json["user_id"],
-      user: json["user_name"] ?? "",
-      result: json["result"],
+  factory UserResponseModel.fromJson(Map<String, dynamic> json) {
+    final inputs = json["user_inputs"] ?? {};
+
+    return UserResponseModel(
+      status: json["status"] ?? "",
+      predictionId: json["prediction_id"] ?? 0,
+      result: json["result"] ?? "",
+
       values: ValuesModel.fromJson(json["extracted_pdf_values"]),
 
-      age: (json["user_inputs"]["age"] as num).toDouble(),
-      weight: (json["user_inputs"]["weight"] as num).toDouble(),
-      height: (json["user_inputs"]["height"] as num).toDouble(),
-      bmi: (json["user_inputs"]["bmi"] as num).toDouble(),
+      age: (inputs["Age"] as num).toDouble(),
+      weight: (inputs["Weight"] as num).toDouble(),
+      height: (inputs["Height"] as num).toDouble(),
+      bmi: (inputs["BMI"] as num).toDouble(),
 
-      fastFoodConsumption: json["user_inputs"]["fast_food_consumption"] ?? "",
-      bloodGroup: json["user_inputs"]["blood_group"] ?? "",
-      pulseRate: (json["user_inputs"]["pulse_rate"] as num).toDouble(),
-
-      cycleRegularity: json["user_inputs"]["cycle_regularity"] ?? "",
-      hairGrowth: json["user_inputs"]["hair_growth"] ?? "",
-      acne: json["user_inputs"]["acne"] ?? "",
-      moodSwings: json["user_inputs"]["mood_swings"] ?? "",
-      skinDarkening: json["user_inputs"]["skin_darkening"] ?? "",
+      fastFoodConsumption: inputs["Fast_Food_Consumption"] ?? 0,
+      bloodGroup: inputs["Blood_Group"] ?? 0,
+      cycleRegularity: inputs["Cycle_Regularity"] ?? 0,
+      hairGrowth: inputs["Hair_Growth"] ?? 0,
+      acne: inputs["Acne"] ?? 0,
+      moodSwings: inputs["Mood_Swings"] ?? 0,
+      skinDarkening: inputs["Skin_Darkening"] ?? 0,
     );
-
-
-  Map<String, dynamic> toJson() => {
-        "status": status,
-        "user_id": userId,
-        "user": user,
-        "result": result,
-        "values": values.toJson(),
-        "age": age,
-        "weight": weight,
-        "height": height,
-        "bmi": bmi,
-        "fast_food_consumption": fastFoodConsumption,
-        "blood_group": bloodGroup,
-        "pulse_rate": pulseRate,
-        "cycle_regularity": cycleRegularity,
-        "hair_growth": hairGrowth,
-        "acne": acne,
-        "mood_swings": moodSwings,
-        "skin_darkening": skinDarkening,
-      };
+  }
 }
 
 class ValuesModel {
@@ -122,15 +92,4 @@ class ValuesModel {
         testosterone: (json["Testosterone"] as num).toDouble(),
         hemoglobin: (json["Hemoglobin"] as num).toDouble(),
       );
-
-  Map<String, dynamic> toJson() => {
-        "TSH": tsh,
-        "VitaminD": vitaminD,
-        "Glucose": glucose,
-        "LH": lh,
-        "FSH": fsh,
-        "Prolactin": prolactin,
-        "Testosterone": testosterone,
-        "Hemoglobin": hemoglobin,
-      };
 }

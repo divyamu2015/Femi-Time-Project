@@ -32,36 +32,80 @@ class _HosDoctorAppointmentsPageState extends State<HosDoctorAppointmentsPage> {
     return DateFormat('dd-MM-yyyy').format(date);
   }
 
+  Future<void> cancelBooking(int bookingId, int index) async {
+    final url = Uri.parse(
+      'https://417sptdw-8005.inc1.devtunnels.ms/userapp/doctor/cancel-booking/$bookingId/${widget.doctorId}/',
+    );
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({"status": "cancelled"}),
+      );
+
+      if (response.statusCode == 200) {
+        setState(() {
+          bookings.removeAt(index); // hide from screen
+        });
+      }
+    } catch (e) {
+      debugPrint("Cancel error: $e");
+    }
+  }
+
+  Future<void> completeBooking(int bookingId, int index) async {
+    final url = Uri.parse(
+      'https://417sptdw-8005.inc1.devtunnels.ms/userapp/doctor/complete-booking/$bookingId/${widget.doctorId}/',
+    );
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({"status": "completed"}),
+      );
+
+      if (response.statusCode == 200) {
+        setState(() {
+          bookings[index]['local_status'] = 'completed';
+        });
+      }
+    } catch (e) {
+      debugPrint("Complete error: $e");
+    }
+  }
+
   Future<void> fetchBookings() async {
-  setState(() {
-    isLoading = true;
-    errorText = null;
-  });
-  final url = Uri.parse(
-    'https://417sptdw-8005.inc1.devtunnels.ms/userapp/hospital/doctor/${widget.doctorId}/bookings/',
-  );
-  print('Fetching bookings from: $url'); // Debug log
-  try {
-    final response = await http.get(url);
-    print('Response code: ${response.statusCode}'); // Debug log
-    if (response.statusCode == 200) {
+    setState(() {
+      isLoading = true;
+      errorText = null;
+    });
+    final url = Uri.parse(
+      'https://417sptdw-8005.inc1.devtunnels.ms/userapp/hospital/doctor/${widget.doctorId}/bookings/',
+    );
+    print('Fetching bookings from: $url'); // Debug log
+    try {
+      final response = await http.get(url);
+      print('Response code: ${response.statusCode}'); // Debug log
+      if (response.statusCode == 200) {
+        setState(() {
+          bookings = jsonDecode(response.body) as List<dynamic>;
+          isLoading = false;
+        });
+      } else {
+        setState(() {
+          errorText = 'Failed to load bookings: ${response.statusCode}';
+          isLoading = false;
+        });
+      }
+    } catch (e) {
       setState(() {
-        bookings = jsonDecode(response.body) as List<dynamic>;
-        isLoading = false;
-      });
-    } else {
-      setState(() {
-        errorText = 'Failed to load bookings: ${response.statusCode}';
+        errorText = 'Error: $e';
         isLoading = false;
       });
     }
-  } catch (e) {
-    setState(() {
-      errorText = 'Error: $e';
-      isLoading = false;
-    });
   }
-}
 
   // Future<void> fetchBookings() async {
   //   setState(() {
@@ -214,6 +258,55 @@ class _HosDoctorAppointmentsPageState extends State<HosDoctorAppointmentsPage> {
                           // If you want to show doctor name:
                           // const SizedBox(height: 4),
                           // Text("Doctor: ${appoint['doctor_name']}")
+                          const SizedBox(height: 12),
+
+                          // Status text
+                          if (appoint['local_status'] == 'completed')
+                            Text(
+                              "Completed",
+                              style: TextStyle(
+                                color: Colors.green.shade700,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+
+                          if (appoint['local_status'] != 'completed')
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                // Cancel button
+                                OutlinedButton(
+                                  onPressed: () {
+                                    cancelBooking(appoint['id'], index);
+                                  },
+                                  style: OutlinedButton.styleFrom(
+                                    foregroundColor: Colors.red,
+                                    side: const BorderSide(color: Colors.red),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                  child: const Text("Cancel"),
+                                ),
+
+                                const SizedBox(width: 10),
+
+                                // Complete button
+                                ElevatedButton(
+                                  onPressed: () {
+                                    completeBooking(appoint['id'], index);
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFF06857B),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                  child: const Text("Complete"),
+                                ),
+                              ],
+                            ),
                         ],
                       ),
                     ),
