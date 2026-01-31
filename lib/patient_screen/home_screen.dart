@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:femitime_project/authentication/patient/login_screen/login_view_page.dart';
 import 'package:femitime_project/patient_screen/articles_screen.dart';
@@ -12,6 +14,7 @@ import 'package:femitime_project/patient_screen/view_books/view_book.dart';
 import 'package:flutter/material.dart';
 import 'package:circle_nav_bar/circle_nav_bar.dart';
 import 'package:flutter_slider_drawer/flutter_slider_drawer.dart';
+import 'package:http/http.dart' as http;
 import 'package:typewritertext/typewritertext.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -36,13 +39,99 @@ class _HomeScreenState extends State<HomeScreen>
 
   int? userId;
   late PageController pageController;
+// Add these variables
+List<dynamic> _doctorCancelledBookings = [];
+int get notificationCount => _doctorCancelledBookings.length;
 
   @override
   void initState() {
     super.initState();
     pageController = PageController(initialPage: _tabIndex);
     userId = widget.userId;
+    fetchDoctorCancelledBookings();
+
   }
+
+  void _showCancelledNotifications() {
+  showDialog(
+    context: context,
+    builder: (_) => AlertDialog(
+      title: const Text('Cancelled Appointments'),
+      content: SizedBox(
+        width: double.maxFinite,
+        child: ListView.builder(
+          shrinkWrap: true,
+          itemCount: _doctorCancelledBookings.length,
+          itemBuilder: (context, index) {
+            final booking = _doctorCancelledBookings[index];
+            return Card(
+              color: Colors.red.shade50,
+              margin: const EdgeInsets.symmetric(vertical: 6),
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      booking['doctor_name'] ?? 'Unknown Doctor',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.red,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Message: Your appointment has been cancelled by the doctor.',
+                      style: const TextStyle(color: Colors.black87),
+                    ),
+                    Text(
+                      'Date: ${booking['date']}',
+                      style: const TextStyle(color: Colors.black87),
+                    ),
+                    Text(
+                      'Time: ${booking['time']}',
+                      style: const TextStyle(color: Colors.black87),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Status: ${booking['status']}',
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Close'),
+        ),
+      ],
+    ),
+  );
+}
+
+Future<void> fetchDoctorCancelledBookings() async {
+  final url = Uri.parse(
+      'https://417sptdw-8005.inc1.devtunnels.ms/userapp/user/doctor-cancelled-bookings/$userId/');
+  try {
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      if (data['status'] == 'success' &&
+          data['doctor_cancelled_bookings'] != null) {
+        setState(() {
+          _doctorCancelledBookings = data['doctor_cancelled_bookings'];
+        });
+      }
+    }
+  } catch (e) {
+    print('Error fetching doctor cancelled bookings: $e');
+  }
+}
 
   Future<void> _showLogoutDialog(BuildContext context) async {
     return showDialog(
@@ -81,95 +170,137 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
-  Widget quickModules() {
-    final modules = [
-      // {'icon': Icons.history, 'label': 'Cycle History'},
-      {'icon': Icons.book, 'label': 'Books'},
-      {'icon': Icons.video_library, 'label': 'Videos'},
-      {'icon': Icons.link, 'label': 'Links'},
-      {'icon': Icons.article, 'label': 'Articles'},
-    ];
+ Widget quickModules() {
+  final modules = [
+    {'icon': Icons.book, 'label': 'Books'},
+    {'icon': Icons.video_library, 'label': 'Videos'},
+    {'icon': Icons.link, 'label': 'Links'},
+    {'icon': Icons.article, 'label': 'Articles'},
+  ];
 
-    return SizedBox(
-      height: 150,
-      //width: 150,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.all(16),
-        itemCount: modules.length,
-        itemBuilder: (context, index) {
-          final module = modules[index];
-          return GestureDetector(
-            onTap: () {
-              // Add individual navigation logic here!
-              if (module['label'] == 'Books') {
-                Navigator.of(
-                  context,
-                ).push(MaterialPageRoute(builder: (_) => BookListPage()));
-              }
-              if (module['label'] == 'Videos') {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => PregnancyVideoScreen()),
-                );
-              }
-              if (module['label'] == 'Links') {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => PeriodsReferencesApp(userId: userId!),
-                  ),
-                );
-              }
-              if (module['label'] == 'Articles') {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => PeriodsArticlesApp(userId: userId!),
-                  ),
-                );
-              }
-            },
-            child: Container(
-              width: 150,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(18),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color.fromARGB(
-                      255,
-                      173,
-                      58,
-                      96,
-                    ).withOpacity(0.12),
-                    blurRadius: 8,
-                    offset: Offset(0, 4),
-                  ),
-                ],
-              ),
-              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 10),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    module['icon'] as IconData,
-                    size: 38,
-                    color: const Color.fromARGB(255, 221, 44, 32),
-                  ),
-                  SizedBox(height: 14),
-                  Text(
-                    '${module['label']}',
-                    //  module['label'],
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
-                  ),
-                ],
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              "Quick Modules",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
               ),
             ),
-          );
-        },
-        separatorBuilder: (_, __) => SizedBox(width: 16),
+            Stack(
+              children: [
+                IconButton(
+                  icon: Icon(
+                    Icons.notifications,
+                    color: notificationCount > 0 ? Colors.red : Colors.grey,
+                  ),
+                  onPressed: () {
+                    if (notificationCount > 0) {
+                      _showCancelledNotifications();
+                    }
+                  },
+                ),
+                if (notificationCount > 0)
+                  Positioned(
+                    right: 6,
+                    top: 6,
+                    child: Container(
+                      padding: const EdgeInsets.all(2),
+                      decoration: const BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Text(
+                        '$notificationCount',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ],
+        ),
       ),
-    );
-  }
+      SizedBox(
+        height: 150,
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.all(16),
+          itemCount: modules.length,
+          itemBuilder: (context, index) {
+            final module = modules[index];
+            return GestureDetector(
+              onTap: () {
+                if (module['label'] == 'Books') {
+                  Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => BookListPage()));
+                }
+                if (module['label'] == 'Videos') {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (_) => PregnancyVideoScreen()));
+                }
+                if (module['label'] == 'Links') {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (_) =>
+                          PeriodsReferencesApp(userId: userId!)));
+                }
+                if (module['label'] == 'Articles') {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (_) => PeriodsArticlesApp(userId: userId!)));
+                }
+              },
+              child: Container(
+                width: 150,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(18),
+                  boxShadow: [
+                    BoxShadow(
+                      color:
+                          const Color.fromARGB(255, 173, 58, 96).withOpacity(0.12),
+                      blurRadius: 8,
+                      offset: Offset(0, 4),
+                    ),
+                  ],
+                ),
+                padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 10),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      module['icon'] as IconData,
+                      size: 38,
+                      color: const Color.fromARGB(255, 221, 44, 32),
+                    ),
+                    const SizedBox(height: 14),
+                    Text(
+                      '${module['label']}',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                          fontSize: 15, fontWeight: FontWeight.w600),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+          separatorBuilder: (_, __) => const SizedBox(width: 16),
+        ),
+      ),
+    ],
+  );
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -274,16 +405,16 @@ class _HomeScreenState extends State<HomeScreen>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(height: 18),
-                        Padding(
-                          padding: EdgeInsets.only(left: 20),
-                          child: Text(
-                            "Quick Modules",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                            ),
-                          ),
-                        ),
+                        // Padding(
+                        //   padding: EdgeInsets.only(left: 20),
+                        //   child: Text(
+                        //     "Quick Modules",
+                        //     style: TextStyle(
+                        //       fontWeight: FontWeight.bold,
+                        //       fontSize: 18,
+                        //     ),
+                        //   ),
+                        // ),
                         const SizedBox(height: 10),
                         quickModules(),
                         SizedBox(height: h * 0.1),

@@ -13,7 +13,8 @@ class HosDoctorAppointmentsPages extends StatefulWidget {
       _HosDoctorAppointmentsPagesState();
 }
 
-class _HosDoctorAppointmentsPagesState extends State<HosDoctorAppointmentsPages> {
+class _HosDoctorAppointmentsPagesState
+    extends State<HosDoctorAppointmentsPages> {
   List<dynamic> bookings = [];
   bool isLoading = true;
   String? errorText;
@@ -108,8 +109,7 @@ class _HosDoctorAppointmentsPagesState extends State<HosDoctorAppointmentsPages>
                   itemCount: bookings.length,
                   itemBuilder: (context, index) {
                     final appoint = bookings[index];
-                    final bool isCancelled =
-                        appoint['isCancelled'] == true;
+                    final bool isCancelled = appoint['isCancelled'] == true;
 
                     return Card(
                       shape: RoundedRectangleBorder(
@@ -142,7 +142,26 @@ class _HosDoctorAppointmentsPagesState extends State<HosDoctorAppointmentsPages>
                               ],
                             ),
                             const SizedBox(height: 10),
-
+Row(
+                              children: [
+                                Text(
+                                  appoint['hospital_name'] ?? 'Unknown',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 17,
+                                  ),
+                                ),
+                                const SizedBox(width: 18),
+                                Text(
+                                  appoint['place'] ?? 'Unknown',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 17,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 10),
                             // Date & Time
                             Row(
                               children: [
